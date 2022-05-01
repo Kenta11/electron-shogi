@@ -14,15 +14,9 @@ import {
 import { USIEngineSettings } from "@/settings/usi";
 import {
   getUSIEngineInfo,
-  startGame as usiStartGame,
-  endGame as usiEndGame,
-  updatePosition as updateUSIPosition,
-  stop as stopUSI,
-  startResearch as usiStartResearch,
-  endResearch as usiEndResearch,
   sendSetOptionCommand as usiSendSetOptionCommand,
 } from "@/usi";
-import { Color, SpecialMove } from "@/shogi";
+import { Color } from "@/shogi";
 import { updateState as updateMenuState } from "@/menu/menu";
 import { MenuEvent } from "@/menu/event";
 import { InfoCommand, USIInfoSender } from "@/usi/info";
@@ -45,23 +39,6 @@ ipcMain.handle(Background.GET_RECORD_PATH_FROM_PROC_ARG, () => {
 
 ipcMain.on(Background.UPDATE_MENU_STATE, (_, mode: Mode, bussy: boolean) => {
   updateMenuState(mode, bussy);
-});
-
-ipcMain.handle(
-  Background.UPDATE_USI_POSITION,
-  (
-    _,
-    usi: string,
-    gameSetting: string,
-    blackTimeMs: number,
-    whiteTimeMs: number
-  ) => {
-    updateUSIPosition(usi, JSON.parse(gameSetting), blackTimeMs, whiteTimeMs);
-  }
-);
-
-ipcMain.handle(Background.STOP_USI, (_, color: Color) => {
-  stopUSI(color);
 });
 
 ipcMain.handle(
@@ -193,31 +170,6 @@ ipcMain.handle(
   Background.GET_USI_ENGINE_INFO,
   async (_, path: string): Promise<string> => {
     return JSON.stringify(await getUSIEngineInfo(path));
-  }
-);
-
-ipcMain.handle(
-  Background.START_RESEARCH,
-  async (_, json: string, sessionID: number) => {
-    await usiStartResearch(sessionID, JSON.parse(json));
-  }
-);
-
-ipcMain.handle(Background.END_RESEARCH, async () => {
-  usiEndResearch();
-});
-
-ipcMain.handle(
-  Background.START_GAME,
-  async (_, json: string, sessionID: number) => {
-    await usiStartGame(sessionID, JSON.parse(json));
-  }
-);
-
-ipcMain.handle(
-  Background.END_GAME,
-  (_, usi: string, specialMove?: SpecialMove) => {
-    usiEndGame(usi, specialMove);
   }
 );
 

@@ -1,10 +1,5 @@
-import { onUSIBestMove, onUSIInfo } from "@/ipc/background";
 import { USIEngineSetting } from "@/settings/usi";
-import { GameSetting } from "@/settings/game";
-import { Color, SpecialMove, getNextColorFromUSI } from "@/shogi";
-import { EngineProcess, GameResult, TimeState } from "./engine";
-import { USIInfoSender } from "./info";
-import { ResearchSetting } from "@/settings/research";
+import { EngineProcess } from "./engine";
 import * as uri from "@/uri";
 
 export async function getUSIEngineInfo(
@@ -74,6 +69,7 @@ const players: {
   research: undefined,
 };
 
+/* FIXME
 function setupPlayer(
   sessionID: number,
   color: Color,
@@ -114,7 +110,9 @@ function setupPlayer(
     process.launch();
   });
 }
+*/
 
+/* FIXME
 export async function startGame(
   sessionID: number,
   gameSetting: GameSetting
@@ -131,7 +129,9 @@ export async function startGame(
   }
   await Promise.all(p);
 }
+*/
 
+/* FIXME
 function gameResult(
   color: Color,
   usi: string,
@@ -153,7 +153,9 @@ function gameResult(
   }
   return null;
 }
+*/
 
+/* FIXME
 export function endGame(usi?: string, specialMove?: SpecialMove): void {
   if (players.black) {
     const result =
@@ -174,7 +176,9 @@ export function endGame(usi?: string, specialMove?: SpecialMove): void {
     players.white = undefined;
   }
 }
+*/
 
+/* FIXME
 function setupResearcher(
   sessionID: number,
   setting: USIEngineSetting
@@ -203,7 +207,9 @@ function setupResearcher(
     process.launch();
   });
 }
+*/
 
+/* FIXME
 export async function startResearch(
   sessionID: number,
   researchSetting: ResearchSetting
@@ -213,14 +219,18 @@ export async function startResearch(
     await setupResearcher(sessionID, researchSetting.usi);
   }
 }
+*/
 
+/* FIXME
 export function endResearch(): void {
   if (players.research) {
     players.research.process.quit();
     players.research = undefined;
   }
 }
+*/
 
+/* FIXME
 export function updatePosition(
   usi: string,
   gameSetting: GameSetting,
@@ -253,7 +263,9 @@ export function updatePosition(
     players.research.process.go(usi);
   }
 }
+*/
 
+/* FIXME
 export function stop(color: Color): void {
   switch (color) {
     case Color.BLACK:
@@ -268,3 +280,4 @@ export function stop(color: Color): void {
       break;
   }
 }
+*/

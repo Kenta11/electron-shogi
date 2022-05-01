@@ -1,6 +1,4 @@
 import {
-  endGame,
-  endResearch,
   openRecord,
   saveAppSetting,
   saveGameSetting,
@@ -8,10 +6,6 @@ import {
   saveResearchSetting,
   showOpenRecordDialog,
   showSaveRecordDialog,
-  startGame,
-  startResearch,
-  stopUSI,
-  updateUSIPosition,
 } from "@/ipc/renderer";
 import {
   Color,
@@ -64,7 +58,7 @@ class Store {
   private _confirmation?: Confirmation;
   private _usi: USIStore;
   private usiSessionID: number;
-  private _game: GameStore;
+  private game: GameStore;
   private unlimitedBeepHandler?: AudioEventHandler;
   private _recordFilePath?: string;
   private _record: Record;
@@ -77,7 +71,7 @@ class Store {
     this._mode = Mode.NORMAL;
     this._usi = new USIStore();
     this.usiSessionID = 0;
-    this._game = new GameStore();
+    this.game = new GameStore();
     this._record = new Record();
   }
 
@@ -263,27 +257,27 @@ class Store {
   }
 
   get gameSetting(): GameSetting {
-    return this._game.setting;
+    return this.game.setting;
   }
 
   get blackTimeMs(): number {
-    return this._game.blackTimeMs;
+    return this.game.blackTimeMs;
   }
 
   get blackByoyomi(): number {
-    return this._game.blackByoyomi;
+    return this.game.blackByoyomi;
   }
 
   get whiteTimeMs(): number {
-    return this._game.whiteTimeMs;
+    return this.game.whiteTimeMs;
   }
 
   get whiteByoyomi(): number {
-    return this._game.whiteByoyomi;
+    return this.game.whiteByoyomi;
   }
 
   get elapsedMs(): number {
-    return this._game.elapsedMs;
+    return this.game.elapsedMs;
   }
 
   async startGame(setting: GameSetting): Promise<boolean> {
@@ -300,8 +294,7 @@ class Store {
         this.clearRecordFilePath();
       }
       this.issueUSISessionID();
-      await startGame(setting, this.usiSessionID);
-      this._game.setup(setting);
+      await this.game.setup(setting);
       this._mode = Mode.GAME;
       this.record.metadata.setStandardMetadata(
         RecordMetadataKey.BLACK_NAME,
@@ -348,7 +341,7 @@ class Store {
     }
     this.retainBussyState();
     try {
-      await endGame(this.record.usi, specialMove);
+      await this.game.close();
       this.record.append(specialMove || SpecialMove.INTERRUPT);
       this.record.current.setElapsedMs(this.elapsedMs);
       this._mode = Mode.NORMAL;
@@ -363,12 +356,12 @@ class Store {
 
   resetGameTimer(): void {
     const color = this.record.position.color;
-    this._game.startTimer(color, {
+    this.game.startTimer(color, {
       timeout: () => {
-        if (this.isMovableByUser || this._game.setting.enableEngineTimeout) {
+        if (this.isMovableByUser || this.game.setting.enableEngineTimeout) {
           this.stopGame(SpecialMove.TIMEOUT);
         } else {
-          stopUSI(color);
+          // FIXME
         }
       },
       onBeepShort: () => {
@@ -463,11 +456,11 @@ class Store {
   }
 
   private incrementTime(): void {
-    this._game.incrementTime(this.record.position.color);
+    this.game.incrementTime(this.record.position.color);
   }
 
   clearGameTimer(): void {
-    this._game.clearTimer();
+    this.game.clearTimer();
     this.stopBeep();
   }
 
@@ -511,7 +504,7 @@ class Store {
     try {
       await saveResearchSetting(researchSetting);
       this.issueUSISessionID();
-      await startResearch(researchSetting, this.usiSessionID);
+      // FIXME
       this._mode = Mode.RESEARCH;
       return true;
     } catch (e) {
@@ -528,7 +521,7 @@ class Store {
     }
     this.retainBussyState();
     try {
-      await endResearch();
+      // FIXME
       this._mode = Mode.NORMAL;
       return true;
     } catch (e) {
@@ -800,12 +793,7 @@ watch(
       storeV2.resetGameTimer();
     }
     if (storeV2.mode === Mode.GAME || storeV2.mode === Mode.RESEARCH) {
-      updateUSIPosition(
-        storeV2.record.usi,
-        storeV2.gameSetting,
-        storeV2.blackTimeMs,
-        storeV2.whiteTimeMs
-      );
+      // FIXME
     }
   },
   { deep: true }

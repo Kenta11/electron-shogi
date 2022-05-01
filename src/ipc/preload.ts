@@ -67,35 +67,6 @@ const api: API = {
   async getUSIEngineInfo(path: string): Promise<string> {
     return await ipcRenderer.invoke(Background.GET_USI_ENGINE_INFO, path);
   },
-  async startResearch(json: string, sessionID: number): Promise<void> {
-    await ipcRenderer.invoke(Background.START_RESEARCH, json, sessionID);
-  },
-  async endResearch(): Promise<void> {
-    await ipcRenderer.invoke(Background.END_RESEARCH);
-  },
-  async startGame(json: string, sessionID: number): Promise<void> {
-    await ipcRenderer.invoke(Background.START_GAME, json, sessionID);
-  },
-  async endGame(usi: string, specialMove?: SpecialMove): Promise<void> {
-    await ipcRenderer.invoke(Background.END_GAME, usi, specialMove);
-  },
-  async updateUSIPosition(
-    usi: string,
-    gameSetting: string,
-    blackTimeMs: number,
-    whiteTimeMs: number
-  ): Promise<void> {
-    await ipcRenderer.invoke(
-      Background.UPDATE_USI_POSITION,
-      usi,
-      gameSetting,
-      blackTimeMs,
-      whiteTimeMs
-    );
-  },
-  async stopUSI(color: Color): Promise<void> {
-    await ipcRenderer.invoke(Background.STOP_USI, color);
-  },
   async sendUSISetOption(path: string, name: string): Promise<void> {
     await ipcRenderer.invoke(Background.SEND_USI_SET_OPTION, path, name);
   },

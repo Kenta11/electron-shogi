@@ -29,17 +29,6 @@ export interface API {
   saveUSIEngineSetting(setting: string): Promise<void>;
   showSelectUSIEngineDialog(): Promise<string>;
   getUSIEngineInfo(path: string): Promise<string>;
-  startResearch(json: string, sessionID: number): Promise<void>;
-  endResearch(): Promise<void>;
-  startGame(json: string, sessionID: number): Promise<void>;
-  endGame(usi: string, specialMove?: SpecialMove): Promise<void>;
-  updateUSIPosition(
-    usi: string,
-    gameSetting: string,
-    blackTimeMs: number,
-    whiteTimeMs: number
-  ): Promise<void>;
-  stopUSI(color: Color): Promise<void>;
   sendUSISetOption(path: string, name: string): Promise<void>;
   onSendError(callback: (e: Error) => void): void;
   onMenuEvent(callback: (event: MenuEvent) => void): void;
@@ -148,49 +137,6 @@ export async function getUSIEngineInfo(
   path: string
 ): Promise<USIEngineSetting> {
   return JSON.parse(await getAPI().getUSIEngineInfo(path));
-}
-
-export async function startResearch(
-  researchSetting: ResearchSetting,
-  sessionID: number
-): Promise<void> {
-  await getAPI().startResearch(JSON.stringify(researchSetting), sessionID);
-}
-
-export async function endResearch(): Promise<void> {
-  await getAPI().endResearch();
-}
-
-export async function startGame(
-  gameSetting: GameSetting,
-  sessionID: number
-): Promise<void> {
-  await getAPI().startGame(JSON.stringify(gameSetting), sessionID);
-}
-
-export async function endGame(
-  usi: string,
-  specialMove?: SpecialMove
-): Promise<void> {
-  await getAPI().endGame(usi, specialMove);
-}
-
-export async function updateUSIPosition(
-  usi: string,
-  gameSetting: GameSetting,
-  blackTimeMs: number,
-  whiteTimeMs: number
-): Promise<void> {
-  await getAPI().updateUSIPosition(
-    usi,
-    JSON.stringify(gameSetting),
-    blackTimeMs,
-    whiteTimeMs
-  );
-}
-
-export async function stopUSI(color: Color): Promise<void> {
-  await getAPI().stopUSI(color);
 }
 
 export async function sendUSISetOption(

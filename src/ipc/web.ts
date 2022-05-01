@@ -84,24 +84,6 @@ export const webAPI: API = {
   async getUSIEngineInfo(): Promise<string> {
     throw "Web版では利用できない機能です。";
   },
-  async startResearch(): Promise<void> {
-    throw "Web版では利用できない機能です。";
-  },
-  async endResearch(): Promise<void> {
-    throw "Web版では利用できない機能です。";
-  },
-  async startGame(): Promise<void> {
-    // Do Nothing
-  },
-  async endGame(): Promise<void> {
-    // Do Nothing
-  },
-  async updateUSIPosition(): Promise<void> {
-    // Do Nothing
-  },
-  async stopUSI(): Promise<void> {
-    // Do Nothing
-  },
   async sendUSISetOption(): Promise<void> {
     // Do Nothing
   },

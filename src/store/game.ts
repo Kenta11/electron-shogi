@@ -1,5 +1,7 @@
-import { defaultGameSetting, GameSetting } from "@/settings/game";
-import { Color } from "@/shogi";
+import { defaultGameSetting, GameSetting, PlayerSetting } from "@/settings/game";
+import { Color, ImmutablePosition } from "@/shogi";
+import * as uri from "@/uri";
+import { humanPlayer, Player, USIPlayer } from "./player";
 
 export type PlayerState = {
   timeMs: number;
@@ -13,17 +15,19 @@ type TimerHandlers = {
 };
 
 export class GameStore {
-  private black: PlayerState;
-  private white: PlayerState;
+  private blackState: PlayerState;
+  private whiteState: PlayerState;
   private timerHandle: number;
   private timerStart: Date;
   private lastTimeMs: number;
   private _elapsedMs: number;
   private _setting: GameSetting;
+  private blackPlayer?: Player;
+  private whitePlayer?: Player;
 
   constructor() {
-    this.black = { timeMs: 0, byoyomi: 0 };
-    this.white = { timeMs: 0, byoyomi: 0 };
+    this.blackState = { timeMs: 0, byoyomi: 0 };
+    this.whiteState = { timeMs: 0, byoyomi: 0 };
     this.timerHandle = 0;
     this.timerStart = new Date();
     this.lastTimeMs = 0;
@@ -32,19 +36,19 @@ export class GameStore {
   }
 
   get blackTimeMs(): number {
-    return this.black.timeMs;
+    return this.blackState.timeMs;
   }
 
   get blackByoyomi(): number {
-    return this.black.byoyomi;
+    return this.blackState.byoyomi;
   }
 
   get whiteTimeMs(): number {
-    return this.white.timeMs;
+    return this.whiteState.timeMs;
   }
 
   get whiteByoyomi(): number {
-    return this.white.byoyomi;
+    return this.whiteState.byoyomi;
   }
 
   get elapsedMs(): number {
@@ -55,20 +59,41 @@ export class GameStore {
     return this._setting;
   }
 
-  setup(setting: GameSetting): void {
-    this.black.timeMs = setting.timeLimit.timeSeconds * 1e3;
-    this.black.byoyomi = setting.timeLimit.byoyomi;
-    this.white.timeMs = setting.timeLimit.timeSeconds * 1e3;
-    this.white.byoyomi = setting.timeLimit.byoyomi;
+  async setup(setting: GameSetting): Promise<void> {
+    this.blackState.timeMs = setting.timeLimit.timeSeconds * 1e3;
+    this.blackState.byoyomi = setting.timeLimit.byoyomi;
+    this.whiteState.timeMs = setting.timeLimit.timeSeconds * 1e3;
+    this.whiteState.byoyomi = setting.timeLimit.byoyomi;
     this._setting = setting;
+    this.blackPlayer = await this.buildPlayer(setting.black);
+    this.whitePlayer = await this.buildPlayer(setting.black);
+  }
+
+  private async buildPlayer(playerSetting: PlayerSetting): Promise<Player> {
+    if (playerSetting.uri === uri.ES_HUMAN) {
+      return humanPlayer;
+    } else if (uri.isUSIEngine(playerSetting.uri)) {
+      const player = new USIPlayer(playerSetting.uri);
+      await player.launch();
+      return player;
+    }
+    throw new Error("予期せぬプレイヤーURIです: " + playerSetting.uri);
+  }
+
+  async close(): Promise<void> {
+    // FIXME: close players
+  }
+
+  updatePosition(_: ImmutablePosition): void {
+    // FIXME
   }
 
   private getPlayerState(color: Color): PlayerState {
     switch (color) {
       case Color.BLACK:
-        return this.black;
+        return this.blackState;
       case Color.WHITE:
-        return this.white;
+        return this.whiteState;
     }
   }
 
